@@ -4,6 +4,7 @@
 /*jshint newcap:false */
 
 /// <reference path="./interfaces.d.ts"/>
+import PieClient from "@websocketpie/client";
 
 import { Utils } from "./utils";
 
@@ -14,9 +15,7 @@ import { Utils } from "./utils";
 // separate out parts of your application.
 class TodoModel implements ITodoModel {
 
-  public key : string;
-  public todos : Array<ITodo>;
-  public onChanges : Array<any>;
+  public pie: PieClient;
 
   constructor(key) {
     this.key = key;
@@ -30,6 +29,7 @@ class TodoModel implements ITodoModel {
 
   public inform() {
     Utils.store(this.key, this.todos);
+    this.pie.sendData(this.todos);
     this.onChanges.forEach(function (cb) { cb(); });
   }
 

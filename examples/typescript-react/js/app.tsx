@@ -13,6 +13,7 @@ import { TodoModel } from "./todoModel";
 import { TodoFooter } from "./footer";
 import { TodoItem } from "./todoItem";
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS, ENTER_KEY } from "./constants";
+import PieClient from "@websocketpie/client";
 
 class TodoApp extends React.Component<IAppProps, IAppState> {
 
@@ -184,4 +185,16 @@ function render() {
 }
 
 model.subscribe(render);
-render();
+
+async function start(){
+  const pie = new PieClient();
+  pie.onData = ({payload}) => {
+    model.todos = payload;
+    render();
+  };
+  await pie.quickConnect('ws://localhost:8080');
+  model.pie = pie;
+
+  render();
+}
+start();
